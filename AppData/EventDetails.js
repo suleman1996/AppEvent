@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   Text,
   View,
@@ -8,30 +8,69 @@ import {
   Image,
   useWindowDimensions,
   ScrollView,
+  ActivityIndicator,
   Dimensions,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import Background from "../Stylesheet/Background";
 import SmallTextGrid from "./SmallTextGrid";
+import axios from "axios";
 import HTML from "react-native-render-html";
 import { AuthContext } from "../config/AuthProvider";
+import * as CON from "../component/Constants";
 
 const eventdetail = ({ navigation, route }) => {
   const contentWidth = useWindowDimensions().width;
 
   let item = route.params.item;
   const { user } = useContext(AuthContext);
-  console.log("000000000000000000000000000000", user.id);
-  // user.role = "user";
   const userValidation = () => {
     if (user == "") {
       navigation.navigate("Login");
     } else {
       if (user.role == "user") {
-        navigation.navigate("QrCode", {
-            event: item,
-          },
-        );
+        // navigation.navigate("QrCode", {
+        //     event: item,
+        //   },
+        // );
+
+        var body = {
+          user_id: user.id,
+          event_id: item.id,
+        };
+        axios.post(CON.URL + "/api/event-visitor", body)
+          .then(function(response) {
+            if (response.data.message == false) {
+              var bodies = {
+                user_id: user.id,
+                event_id: item.id,
+                visiting_status: "pending",
+              };
+              axios.post(CON.URL + "/api/event-visitor-request", bodies)
+                .then(function(response) {
+                  if (response.data.message == true) {
+                    alert("Request Sent");
+                  } else {
+                    alert("There is Something Wrong");
+                  }
+                }).catch(function(error) {
+                alert("There is something Wrong");
+                console.log(error);
+              });
+            } else {
+              if (response.data.data.event_status == "accepted") {
+                navigation.navigate("QrCode", {
+                    event: item,
+                  },
+                );
+              } else {
+                alert("Request is Pending");
+              }
+            }
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
       }
     }
   };
@@ -128,7 +167,7 @@ const eventdetail = ({ navigation, route }) => {
           backgroundColor: "#fff5",
           borderTopLeftRadius: 38,
           borderTopRightRadius: 38,
-          bottom: 0,   
+          bottom: 0,
           position: "absolute",
           height: 55,
           elevation: 0,
