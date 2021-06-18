@@ -128,7 +128,7 @@ const eventdetail = ({ navigation, route }) => {
           backgroundColor: "#fff5",
           borderTopLeftRadius: 38,
           borderTopRightRadius: 38,
-          bottom: 0,
+          bottom: 0,   
           position: "absolute",
           height: 55,
           elevation: 0,
