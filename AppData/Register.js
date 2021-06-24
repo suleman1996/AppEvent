@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { SafeAreaView, Text, View, ImageBackground, Image, TextInput, TouchableOpacity, ScrollView }
+import { SafeAreaView, Text, View, ImageBackground, Image, TextInput, TouchableOpacity, ScrollView, Keyboard }
   from "react-native";
 import RNFetchBlob from "rn-fetch-blob";
 import Background from "../Stylesheet/Background";
@@ -9,7 +9,7 @@ import axios from "axios";
 import { AuthContext } from "../config/AuthProvider";
 
 const Register = ({ navigation, route }) => {
-  const {data,user} =useContext(AuthContext);
+  const { data, user } = useContext(AuthContext);
   const [isRegistraionSuccess, setIsRegistraionSuccess] = useState(false);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
@@ -71,6 +71,7 @@ const Register = ({ navigation, route }) => {
       alert("Please fill nationality");
       return;
     }
+    Keyboard.dismiss();
     setLoading(true);
 
     let proceeding_data = [
@@ -103,8 +104,8 @@ const Register = ({ navigation, route }) => {
         console.log("sjahdkjshkfdjslkfjs###########################4444444", jsonData.data.user_id);
 
         data({
-          uid:jsonData.data.user_id
-        })
+          uid: jsonData.data.user_id,
+        });
         setLoading(false);
       }).catch(error => {
       setLoading(false);
@@ -222,6 +223,7 @@ const Register = ({ navigation, route }) => {
             }}>Register Here
             </Text>
           </View>
+
           <ScrollView>
             <View
               style={{
@@ -230,7 +232,6 @@ const Register = ({ navigation, route }) => {
                 // margin: 10,
                 alignSelf: "center",
               }}>
-
               <TextInput
                 placeholder="     Name"
                 placeholderTextColor="white"
@@ -250,6 +251,10 @@ const Register = ({ navigation, route }) => {
                 placeholder="     Email"
                 onChangeText={userEmail => setUserEmail(userEmail)}
                 value={userEmail}
+                autoCapitalize="none"
+                autoCompleteType="email"
+                keyboardType="email-address"
+                returnKeyType="next"
                 placeholderTextColor="white"
                 style={{
                   borderBottomWidth: 1,

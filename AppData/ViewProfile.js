@@ -163,7 +163,6 @@ const ViewProfile = ({ navigation }) => {
               </View>
             }
 
-
             <TouchableOpacity onPress={() => {
               logout(navigation);
             }}

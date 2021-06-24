@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -8,8 +8,7 @@ import {
   Image,
   useWindowDimensions,
   ScrollView,
-  ActivityIndicator,
-  Dimensions,
+  Dimensions, Button,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import Background from "../Stylesheet/Background";
@@ -21,9 +20,56 @@ import * as CON from "../component/Constants";
 
 const eventdetail = ({ navigation, route }) => {
   const contentWidth = useWindowDimensions().width;
+  const [update, setUpdate] = useState("");
+  const [event, setEvent] = useState("");
+
+  useEffect(() => {
+    const isFocused = navigation.isFocused();
+    var navFocusListener = "";
+    // manually judge if the screen is focused
+    // if did, fire api call
+    if (isFocused) {
+      // do the same API calls here
+      console.log("focused section");
+      check_event();
+    }
+
+    navFocusListener = navigation.addListener("didFocus", () => {
+      // do some API calls here
+      console.log("listener section");
+    });
+
+  }, []);
+
 
   let item = route.params.item;
   const { user } = useContext(AuthContext);
+
+  const check_event = () => {
+    if (user == "") {
+      // navigation.navigate("Login");
+    } else {
+      if (user.role == "user") {
+        var body = {
+          user_id: user.id,
+          event_id: item.id,
+        };
+        axios.post(CON.URL + "/api/event-visitor", body)
+          .then(function(response) {
+            if (response.data.message == true) {
+              setEvent(response.data.data.event_status);
+            } else {
+              setEvent("");
+            }
+          })
+          .catch(function(error) {
+              console.log(error);
+            },
+          );
+      }
+    }
+  };
+
   const userValidation = () => {
     if (user == "") {
       navigation.navigate("Login");
@@ -33,7 +79,6 @@ const eventdetail = ({ navigation, route }) => {
         //     event: item,
         //   },
         // );
-
         var body = {
           user_id: user.id,
           event_id: item.id,
@@ -47,9 +92,11 @@ const eventdetail = ({ navigation, route }) => {
                 visiting_status: "pending",
               };
               axios.post(CON.URL + "/api/event-visitor-request", bodies)
-                .then(function(response) {
+                .then(async function(response) {
+
                   if (response.data.message == true) {
                     alert("Request Sent");
+                    await setEvent(response.data.data.event_status);
                   } else {
                     alert("There is Something Wrong");
                   }
@@ -64,13 +111,14 @@ const eventdetail = ({ navigation, route }) => {
                   },
                 );
               } else {
-                alert("Request is Pending");
+                setEvent("");
               }
             }
           })
           .catch(function(error) {
-            console.log(error);
-          });
+              console.log(error);
+            },
+          );
       }
     }
   };
@@ -123,7 +171,7 @@ const eventdetail = ({ navigation, route }) => {
           <Image source={{ uri: item.image }} style={{ height: 200 }} />
           <View>
 
-            <View style={{ width: "100%", backgroundColor: "#191919" }}>
+            <View style={{ width: "100%", backgroundColor: "#191919", flexDirection: "row" }}>
               <Text style={{
                 fontSize: 24,
                 paddingLeft: 40,
@@ -133,17 +181,36 @@ const eventdetail = ({ navigation, route }) => {
               >
                 {item.title}
               </Text>
+
+
             </View>
 
             <View
               style={{
                 backgroundColor: "#191919",
-                height: 75,
+                height: 85,
                 width: "100%",
               }}>
               <SmallTextGrid icon="title" title={item.speaker_name} />
               <SmallTextGrid icon="theme" title={item.event_theme} />
               <SmallTextGrid icon="location" title={item.venue} />
+
+              {user.role == "user" ? (
+                <View style={{ width: 70, marginLeft: "75%" }}>
+                  {event !== "" ? <Text
+                      style={{
+                        color: "#fff",
+                        backgroundColor: event == "accepted" ? "green" : "orange",
+                        width: 80,
+                        textAlign: "center",
+                        alignSelf: "center",
+                      }}>
+                      {event}</Text>
+                    :
+                    null
+                  }
+                </View>
+              ) : null}
 
             </View>
           </View>
@@ -192,7 +259,6 @@ const eventdetail = ({ navigation, route }) => {
             </TouchableOpacity>
           }
         </View>
-
       </Background>
     </SafeAreaView>
   );

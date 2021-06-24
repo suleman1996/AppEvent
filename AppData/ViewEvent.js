@@ -59,7 +59,8 @@ export const ViewEvent = ({ navigation, item }) => {
             </View>
           </LinearGradient>
 
-          <View style={{ height: 25, margin: 30 }}>
+          <View
+            style={{ height: 25, margin: 30 }}>
             <Text
               style={{
                 color: "#F8F8F8",
@@ -116,19 +117,20 @@ export const ViewEvent = ({ navigation, item }) => {
                       }}
                       source={{ uri: item.image }} />
 
-                    <LinearGradient colors={["#000",
-                      "#b1b0b0",
-                      "transparent"]}
-                                    start={{ x: 0, y: 1 }}
-                                    end={{ x: 1, y: 1 }}
-                                    style={{
-                                      height: 45,
-                                      width: "100%",
-                                      opacity: 0.8,
-                                      position: "absolute",
-                                      bottom: 0,
-                                      zIndex: 100,
-                                    }}>
+                    <LinearGradient
+                      colors={["#000",
+                        "#b1b0b0",
+                        "transparent"]}
+                      start={{ x: 0, y: 1 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        height: 45,
+                        width: "100%",
+                        opacity: 0.8,
+                        position: "absolute",
+                        bottom: 0,
+                        zIndex: 100,
+                      }}>
                       <Text style={{
                         color: "#fff",
                         paddingLeft: 15,

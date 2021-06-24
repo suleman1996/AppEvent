@@ -7,6 +7,7 @@ import base64 from "react-native-base64";
 import { QRCode } from "react-native-custom-qr-codes";
 
 export const QrCode = ({ route }) => {
+
   let event = route.params.event;
   const { user, appData } = useContext(AuthContext);
   const URL = base64.encode(JSON.stringify(
@@ -60,8 +61,8 @@ export const QrCode = ({ route }) => {
             </View>
 
             <View style={{ marginTop: "1%" }}>
-              <Text style={{ color: "#fff", fontSize: 18, paddingTop: 5, textAlign: "center" }}>VRDA1
-                Event</Text>
+              <Text style={{ color: "#fff", fontSize: 18, paddingTop: 5, textAlign: "center" }}>
+                {event.title}</Text>
               <Text style={{
                 color: "#fff",
                 fontSize: 18,
