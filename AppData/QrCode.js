@@ -1,23 +1,44 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Text, View, SafeAreaView, Image } from "react-native";
 import Background from "../Stylesheet/Background";
 import LinearGradient from "react-native-linear-gradient";
 import { AuthContext } from "../config/AuthProvider";
 import base64 from "react-native-base64";
 import { QRCode } from "react-native-custom-qr-codes";
+import * as CON from "../component/Constants";
 
 export const QrCode = ({ route }) => {
 
   let event = route.params.event;
   const { user, appData } = useContext(AuthContext);
+  const [data, setdata] = useState([]);
   const URL = base64.encode(JSON.stringify(
     {
       ev: event.id,
       us: user.id,
       em: user.email,
       nm: user.name,
+      et: event.title,
+      ei: event.image,
+      es: event.speaker_name,
+      el: event.event_location,
+      Ev: event.venue,
+      est: event.start_time,
+      eet: event.end_time,
     },
   ));
+
+  // useEffect(() => {
+  //   fetch(LINK)
+  //     .then((response) => response.json())
+  //     .then((json) => {
+  //       setdata(json.data);
+  //     })
+  //     .catch((error) => {
+  //       // NOTHING
+  //     });
+  // }, []);
+
   return (
     <SafeAreaView>
       <Background>

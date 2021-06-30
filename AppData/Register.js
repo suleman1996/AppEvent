@@ -1,12 +1,13 @@
-import React, { useState, useContext } from "react";
-import { SafeAreaView, Text, View, ImageBackground, Image, TextInput, TouchableOpacity, ScrollView, Keyboard }
+import React, { useState, useContext, useEffect } from "react";
+import { SafeAreaView, Text, View, ImageBackground, Image, TextInput, TouchableOpacity, ScrollView, Keyboard, Button }
   from "react-native";
 import RNFetchBlob from "rn-fetch-blob";
 import Background from "../Stylesheet/Background";
-import DatePicker from "react-native-date-picker";
 import * as CON from "../component/Constants";
-import axios from "axios";
 import { AuthContext } from "../config/AuthProvider";
+import DatePicker from "react-native-datepicker";
+
+var validator = require("email-validator");
 
 const Register = ({ navigation, route }) => {
   const { data, user } = useContext(AuthContext);
@@ -16,14 +17,35 @@ const Register = ({ navigation, route }) => {
   const [userPassword, setUserPassword] = useState("");
   const [userConfirmPassword, setuserConfirmPassword] = useState(null);
   const [phone, setPhone] = useState("");
-  const [date, setDate] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
+  // const [dob, setDob] = useState("");
+  // const [month, setMonth] = useState("");
+  // const [year, setYear] = useState("");
   const [cnic, setCnic] = useState("");
   const [country, setCountry] = useState("");
   const [nationality, setNationality] = useState("");
+  const [dob, setDob] = useState("");
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState("");
+  let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+
+
+  //  useEffect(async () =>{
+  //
+  // const data =  await validateEmail("naumanbabar@hotmail.com")
+  //    if (data ==true){
+  //      alert("ok")
+  //    } else {
+  //      alert("false")
+  //    }
+  //  })
+
+  const validateEmail = () => {
+    var email = userEmail;
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+    // alert(re.test(String(email).toLowerCase()))
+  };
 
   const handleSubmitButton = () => {
     setErrortext("");
@@ -31,34 +53,63 @@ const Register = ({ navigation, route }) => {
       alert("Please fill name");
       return;
     }
-    if (!userEmail) {
-      alert("Please fill email");
-      return;
+    // if (!userEmail) {
+    //   alert("Please fill email");
+    //   return;
+    // }
+
+    // if (reg.test(userEmail) === false) {
+    //   alert("invalid email")
+    //   setUserEmail({userEmail:userEmail})
+    // }
+    {
+      if (!userEmail) {
+        alert("Please fill email");
+        return;
+      } else if (!validateEmail()) {
+        alert("Please Enter the correct email");
+        return;
+      }
     }
-    if (!userPassword) {
-      alert("Please fill password");
-      return;
+
+    {
+      if (!userPassword) {
+        alert("Please fill password");
+        return;
+      } else if (userPassword.length <= 5) {
+        alert("Password must be 6 characters");
+        return;
+      }
+
     }
-    if (!userConfirmPassword) {
-      alert("Please fill confirmpassword");
-      return;
+
+    {
+      if (!userConfirmPassword) {
+        alert("Please fill confirmpassword");
+        return;
+      } else if (userConfirmPassword.length <= 5) {
+        alert("Password not matched");
+        return;
+      }
     }
+
     if (!phone) {
       alert("Please fill phone");
       return;
     }
-    if (!date) {
-      alert("Please fill D/O/B");
-      return;
+
+    {
+      if (!dob) {
+        alert("please fill D/O/B");
+        return;
+      } else
+        if ( dob <= 18)
+        {
+          alert("Older than 18 years");
+          return;
+        }
     }
-    if (!month) {
-      alert("Please fill D/O/B");
-      return;
-    }
-    if (!year) {
-      alert("Please fill D/O/B");
-      return;
-    }
+
     if (!cnic) {
       alert("Please fill cnic");
       return;
@@ -80,9 +131,7 @@ const Register = ({ navigation, route }) => {
       { name: "password", data: userPassword },
       { name: "c_password", data: userConfirmPassword },
       { name: "phone", data: phone },
-      { name: "date", data: date },
-      { name: "month", data: month },
-      { name: "year", data: year },
+      { name: "dob", data: dob },
       { name: "cnic", data: cnic },
       { name: "country", data: country },
       { name: "nationality", data: nationality },
@@ -101,6 +150,7 @@ const Register = ({ navigation, route }) => {
           }
           setErrortext("Registration Unsuccessful");
         }
+        alert(res["data"]);
         console.log("sjahdkjshkfdjslkfjs###########################4444444", jsonData.data.user_id);
 
         data({
@@ -233,7 +283,7 @@ const Register = ({ navigation, route }) => {
                 alignSelf: "center",
               }}>
               <TextInput
-                placeholder="     Name"
+                placeholder="    User Name"
                 placeholderTextColor="white"
                 onChangeText={userName => setUserName(userName)}
                 value={userName}
@@ -302,7 +352,9 @@ const Register = ({ navigation, route }) => {
                 placeholder="     Phone"
                 onChangeText={phone => setPhone(phone)}
                 value={phone}
-                maxLength={11}
+                numaric
+                keyboardType="number-pad"
+                maxLength={20}
                 placeholderTextColor="white"
                 style={{
                   borderBottomWidth: 1,
@@ -314,55 +366,48 @@ const Register = ({ navigation, route }) => {
                   borderColor: "#989292",
                 }} />
 
-              <TextInput
-                placeholder="     Date"
-                onChangeText={date => setDate(date)}
-                value={date}
-                placeholderTextColor="white"
-                style={{
-                  borderBottomWidth: 1,
-                  height: 50,
-                  color: "#fff",
-                  width: "70%",
-                  alignSelf: "center",
-                  // margin: 2,
-                  borderColor: "#989292",
-                }} />
-              <TextInput
-                placeholder="     month"
-                onChangeText={month => setMonth(month)}
-                value={month}
-                placeholderTextColor="white"
-                style={{
-                  borderBottomWidth: 1,
-                  height: 50,
-                  color: "#fff",
-                  width: "70%",
-                  alignSelf: "center",
-                  // margin: 2,
-                  borderColor: "#989292",
-                }} />
-              <TextInput
-                placeholder="     year"
-                onChangeText={year => setYear(year)}
-                value={year}
-                maxLength={4}
-                placeholderTextColor="white"
-                style={{
-                  borderBottomWidth: 1,
-                  height: 50,
-                  color: "#fff",
-                  width: "70%",
-                  alignSelf: "center",
-                  // margin: 2,
-                  borderColor: "#989292",
-                }} />
+              <DatePicker
+                style={{ width: 280, alignSelf: "center", margin: 6, marginTop: 15 }}
+                date={dob}
+                value={dob}
+                mode="date"
+                placeholder="      D/O/B"
+                format="YYYY-MM-DD"
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                showIcon={false}
+                customStyles={{
+                  dateIcon: {
+                    position: "absolute",
+                    left: 0,
+                    top: 4,
+                    marginRight: 0,
+                  },
+                  dateText: {
+                    fontSize: 14,
+                    color: "#fff",
+                    paddingLeft: 3,
+                    textAlign: "left",
+                  },
+                  dateInput: {
+                    // marginLeft: 6,
+                    alignItems: "flex-start",
+                    borderTopWidth: 0,
+                    borderLeftWidth: 0,
+                    borderRightWidth: 0,
+                  },
+                  // ... You can check the source to find the other keys.
+                }}
+                onDateChange={dob => setDob(dob)}
+              />
 
               <TextInput
                 placeholder="     CNIC"
                 onChangeText={cnic => setCnic(cnic)}
                 value={cnic}
                 maxLength={15}
+                numaric
+                keyboardType="number-pad"
                 placeholderTextColor="white"
                 style={{
                   borderBottomWidth: 1,
@@ -387,6 +432,15 @@ const Register = ({ navigation, route }) => {
                   alignSelf: "center",
                   borderColor: "#989292",
                 }} />
+              {/*<CountrySelectDropdown*/}
+              {/*  styles={{width:100,color: "#fff"}}*/}
+              {/*  countrySelect={setCountry}*/}
+              {/*  // error={errorMsg}*/}
+              {/*  fontFamily={"Nunito-Regular"}*/}
+              {/*  textColor={"#000"}*/}
+
+              {/*/>*/}
+
               <TextInput
                 placeholder="     Nationality"
                 onChangeText={nationality => setNationality(nationality)}
@@ -397,10 +451,10 @@ const Register = ({ navigation, route }) => {
                   height: 50,
                   color: "#fff",
                   width: "70%",
-
                   alignSelf: "center",
                   borderColor: "#989292",
                 }} />
+
             </View>
 
             <View

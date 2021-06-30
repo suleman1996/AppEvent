@@ -5,6 +5,7 @@ import LinearGradient from "react-native-linear-gradient";
 import { AuthContext } from "../config/AuthProvider";
 
 const ViewProfile = ({ navigation }) => {
+
   const { user, logout, login } = useContext(AuthContext);
 
   if (user == "") {
@@ -98,32 +99,10 @@ const ViewProfile = ({ navigation }) => {
                   borderColor: "#62788B",
                   borderWidth: 1,
                 }}>
-                  <Text style={{ margin: 15, color: "#fff" }}> {user.date} </Text>
+                  <Text style={{ margin: 15, color: "#fff" }}> {user.dob} </Text>
                 </View>
 
-                <View style={{
-                  height: 50,
-                  width: 300,
-                  alignSelf: "center",
-                  borderRadius: 30,
-                  margin: 8,
-                  borderColor: "#62788B",
-                  borderWidth: 1,
-                }}>
-                  <Text style={{ margin: 15, color: "#fff" }}> {user.month} </Text>
-                </View>
 
-                <View style={{
-                  height: 50,
-                  width: 300,
-                  alignSelf: "center",
-                  borderRadius: 30,
-                  margin: 8,
-                  borderColor: "#62788B",
-                  borderWidth: 1,
-                }}>
-                  <Text style={{ margin: 15, color: "#fff" }}> {user.year} </Text>
-                </View>
 
                 <View style={{
                   height: 50,

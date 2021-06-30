@@ -6,6 +6,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   Image,
+  RefreshControl,
   useWindowDimensions,
   ScrollView,
   Dimensions, Button,
@@ -18,8 +19,13 @@ import HTML from "react-native-render-html";
 import { AuthContext } from "../config/AuthProvider";
 import * as CON from "../component/Constants";
 
+const wait = (timeout) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
+
 const eventdetail = ({ navigation, route }) => {
   const contentWidth = useWindowDimensions().width;
+  const [refreshing, setRefreshing] = React.useState(false);
   const [update, setUpdate] = useState("");
   const [event, setEvent] = useState("");
 
@@ -122,6 +128,10 @@ const eventdetail = ({ navigation, route }) => {
       }
     }
   };
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
   return (
     <SafeAreaView>
       <Background style={{ width: "100%", backgroundColor: "blue" }}>
@@ -138,36 +148,62 @@ const eventdetail = ({ navigation, route }) => {
               </View>
 
               {user.role == "admin" ? (
-                  <></>
-                ) :
-                <TouchableOpacity
-                  style={{ alignItems: "flex-end", justifyContent: "center" }} onPress={() => {
-                  userValidation();
-                }}>
-                  <Text
-                    style={{
-                      color: "#fff",
-                      fontSize: 20,
-                    }}>JOIN</Text>
-                </TouchableOpacity>
+                <></>
+              ) : (
+                event == "joined" ? (null) : (event == "pending") ? (
+                    <TouchableOpacity
+                      disabled={true}
+                      style={{ alignItems: "flex-end", justifyContent: "center" }} onPress={() => {
+                      userValidation();
+                    }}>
+                      <Text
+                        style={{
+                          color: "#fff",
+                          fontSize: 20,
+                        }}>JOIN</Text>
+                    </TouchableOpacity>) :
+                  (event == "accepted" ? (null) :
+                      (
+                        <>
+                          <TouchableOpacity
+                            style={{ alignItems: "flex-end", justifyContent: "center" }} onPress={() => {
+                            userValidation();
+                          }}>
+                            <Text
+                              style={{
+                                color: "#fff",
+                                fontSize: 20,
+                              }}>JOIN</Text>
+                          </TouchableOpacity>
+                        </>
+                      )
+                  )
+              )
               }
             </View>
 
           </LinearGradient>
         </View>
 
-        <ScrollView style={{
-          marginVertical: 5,
-          backgroundColor: "rgba(0,0,0,0.4)",
-          borderWidth: 1,
-          borderColor: "#5d5d5d",
-          margin: 10,
-          flex: 1,
-          padding: 10,
-          borderRadius: 5,
-          height: Dimensions.get("window").height - 200,
-          marginBottom: 100,
-        }}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          style={{
+            marginVertical: 5,
+            backgroundColor: "rgba(0,0,0,0.4)",
+            borderWidth: 1,
+            borderColor: "#5d5d5d",
+            margin: 10,
+            flex: 1,
+            padding: 10,
+            borderRadius: 5,
+            height: Dimensions.get("window").height - 200,
+            marginBottom: 100,
+          }}>
           <Image source={{ uri: item.image }} style={{ height: 200 }} />
           <View>
 
@@ -242,21 +278,36 @@ const eventdetail = ({ navigation, route }) => {
         }}>
 
           {user.role == "admin" ? (
-              <></>
-            ) :
-            <TouchableOpacity
-              onPress={() => {
-                userValidation();
-              }}>
-              <ImageBackground source={require("../Assets/Qr.png")}
-                               style={{
-                                 marginTop: -45,
-                                 height: 95,
-                                 width: 95,
-                                 alignSelf: "center",
-                               }}>
-              </ImageBackground>
-            </TouchableOpacity>
+            <></>
+          ) : (event == "joined" ? (null) : (event == "pending") ? (
+                <TouchableOpacity
+                  disabled={true}
+                  onPress={() => {
+                    userValidation();
+                  }}>
+                  <ImageBackground source={require("../Assets/Qr.png")}
+                                   style={{
+                                     marginTop: -45,
+                                     height: 95,
+                                     width: 95,
+                                     alignSelf: "center",
+                                   }}>
+                  </ImageBackground>
+                </TouchableOpacity>) :(event == "rejected" )?null:
+              <TouchableOpacity
+                onPress={() => {
+                  userValidation();
+                }}>
+                <ImageBackground source={require("../Assets/Qr.png")}
+                                 style={{
+                                   marginTop: -45,
+                                   height: 95,
+                                   width: 95,
+                                   alignSelf: "center",
+                                 }}>
+                </ImageBackground>
+              </TouchableOpacity>
+          )
           }
         </View>
       </Background>

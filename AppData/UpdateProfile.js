@@ -5,6 +5,7 @@ import LinearGradient from "react-native-linear-gradient";
 import * as CON from "../component/Constants";
 import { AuthContext } from "../config/AuthProvider";
 import axios from "axios";
+import DatePicker from "react-native-datepicker";
 
 const UpdateProfile = () => {
   const { user } = useContext(AuthContext);
@@ -13,9 +14,9 @@ const UpdateProfile = () => {
   const [name, setName] = useState(user["name"]);
   const [email, setEmail] = useState(user["email"]);
   const [phone, setPhone] = useState("");
-  const [date, setDate] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
+  const [dob, setDob] = useState("");
+  // const [month, setMonth] = useState("");
+  // const [year, setYear] = useState("");
   const [cnic, setCnic] = useState("");
   const [country, setCountry] = useState("");
   const [nationality, setNationality] = useState("");
@@ -35,18 +36,18 @@ const UpdateProfile = () => {
       alert("Please fill phone");
       return;
     }
-    if (!date) {
-      alert("Please fill date");
+    if (!dob) {
+      alert("Please fill D/O/B");
       return;
     }
-    if (!month) {
-      alert("Please fill month");
-      return;
-    }
-    if (!year) {
-      alert("Please fill year");
-      return;
-    }
+    // if (!month) {
+    //   alert("Please fill month");
+    //   return;
+    // }
+    // if (!year) {
+    //   alert("Please fill year");
+    //   return;
+    // }
     if (!cnic) {
       alert("Please fill cnic");
       return;
@@ -64,10 +65,10 @@ const UpdateProfile = () => {
     formdata.append("id", id);
     formdata.append("name", name);
     formdata.append("phone", phone);
-    formdata.append("date", date);
+    formdata.append("dob", dob);
     formdata.append("email", email);
-    formdata.append("month", month);
-    formdata.append("year", year);
+    // formdata.append("month", month);
+    // formdata.append("year", year);
     formdata.append("cnic", cnic);
     formdata.append("country", country);
     formdata.append("nationality", nationality);
@@ -183,6 +184,8 @@ const UpdateProfile = () => {
                 placeholder="     Phone"
                 onChangeText={phone => setPhone(phone)}
                 value={phone}
+                numaric
+                keyboardType="number-pad"
                 maxLength={11}
                 placeholderTextColor="white"
                 style={{
@@ -193,49 +196,41 @@ const UpdateProfile = () => {
                   alignSelf: "center",
                   borderColor: "#989292",
                 }} />
-
-              <TextInput
-                placeholder="     Date"
-                onChangeText={date => setDate(date)}
-                value={date}
-                placeholderTextColor="white"
-                style={{
-                  borderBottomWidth: 1,
-                  height: 50,
-                  color: "#fff",
-                  width: "70%",
-                  alignSelf: "center",
-                  borderColor: "#989292",
-                }} />
-
-              <TextInput
-                placeholder="     Month"
-                onChangeText={month => setMonth(month)}
-                value={month}
-                placeholderTextColor="white"
-                style={{
-                  borderBottomWidth: 1,
-                  height: 50,
-                  color: "#fff",
-                  width: "70%",
-                  alignSelf: "center",
-                  borderColor: "#989292",
-                }} />
-
-              <TextInput
-                placeholder="     Year"
-                onChangeText={year => setYear(year)}
-                value={year}
-                maxLength={4}
-                placeholderTextColor="white"
-                style={{
-                  borderBottomWidth: 1,
-                  height: 50,
-                  color: "#fff",
-                  width: "70%",
-                  alignSelf: "center",
-                  borderColor: "#989292",
-                }} />
+              
+              <DatePicker
+                style={{ width: 280, alignSelf: "center", margin: 6, marginTop: 15 }}
+                date={dob}
+                value={dob}
+                mode="date"
+                placeholder="        D/O/B"
+                format="YYYY-MM-DD"
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                showIcon={false}
+                customStyles={{
+                  dateIcon: {
+                    position: "absolute",
+                    left: 0,
+                    top: 4,
+                    marginRight: 0,
+                  },
+                  dateText: {
+                    fontSize: 14,
+                    color: "#fff",
+                    paddingLeft: 3,
+                    textAlign: "left",
+                  },
+                  dateInput: {
+                    // marginLeft: 6,
+                    alignItems: "flex-start",
+                    borderTopWidth: 0,
+                    borderLeftWidth: 0,
+                    borderRightWidth: 0,
+                  },
+                  // ... You can check the source to find the other keys.
+                }}
+                onDateChange={dob => setDob(dob)}
+              />
 
               <TextInput
                 placeholder="     CNIC"

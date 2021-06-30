@@ -4,6 +4,7 @@ import { Text, View, Image, FlatList, ActivityIndicator, TouchableOpacity, SafeA
 import Background from "../Assets/Background";
 import LinearGradient from "react-native-linear-gradient";
 import SmallTextGrid from "./SmallTextGrid";
+
 import * as CON from "../component/Constants";
 import { AuthContext } from "../config/AuthProvider";
 
@@ -18,13 +19,16 @@ export const ViewEvent = ({ navigation, item }) => {
     fetch(URL)
       .then((response) => response.json())
       .then((json) => {
+        json.data.reverse()
         setdata(json.data);
+
       })
       .catch((error) => {
         // NOTHING
       })
       .finally(setLoading(false));
   }, []);
+
 
   return (
     <SafeAreaView>
@@ -72,7 +76,7 @@ export const ViewEvent = ({ navigation, item }) => {
           </View>
         </View>
 
-        {isLoading ? (<ActivityIndicator size="large" color="black" />
+        {isLoading ? (<ActivityIndicator size="large" color="white" />
         ) : (
           <View
             style={{
@@ -85,7 +89,9 @@ export const ViewEvent = ({ navigation, item }) => {
             <FlatList
               data={data}
               style={{ width: "100%" }}
-              keyExtractor={({ id }, index) => index}
+              // contentContainerStyle={{flexWrap:"wrap-reverse"}}
+              // keyExtractor={ item => item.id}
+              // inverted={true}
               renderItem={({ item }) => (
 
                 <TouchableOpacity
@@ -145,7 +151,10 @@ export const ViewEvent = ({ navigation, item }) => {
                   <SmallTextGrid icon="dresscode" title={item.event_dress} />
                   <SmallTextGrid icon="time" title={item.start_time} />
                 </TouchableOpacity>
-              )} />
+              )}
+
+            />
+
           </View>
         )}
       </Background>
